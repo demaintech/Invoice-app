@@ -1,30 +1,42 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import  "./Home";
+// import  "./Home";
 // import InvoiceItemList from "./ItemList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 // Default invoices (used if localStorage is empty)
-// const defaultInvoices = [
-//     {
-//         id: "RT308",
-//         duedate: "19 Aug 2021",
-//         name: "Kelechi Kingsley",
-//         amount: 500,
-//         curency: "$",
-//         status: "paid",
-//     },
-//     {
-//         id: "RT309",
-//         duedate: "20 Aug 2021",
-//         name: "Jane Doe",
-//         amount: 750,
-//         curency: "$",
-//         status: "pending",
-//     },
-// ];
+const defaultInvoices = [
+    {
+        id: "RT308",
+        duedate: "19 Aug 2021",
+        name: "Kelechi Kingsley",
+        amount: 500,
+        curency: "$",
+        status: "paid",
+    },
+    {
+        id: "RT309",
+        duedate: "20 Aug 2021",
+        name: "Jane Doe",
+        amount: 750,
+        curency: "$",
+        status: "pending",
+    },
+];
 
+
+// Generate a unique id in the format RTXXX
+const generateInvoiceId = () => {
+    const stored = localStorage.getItem("invoices");
+    const invoicesArr = stored ? JSON.parse(stored) : [];
+    // Find the highest number used so far
+    const maxId = invoicesArr.reduce((max, inv) => {
+        const match = inv.id && inv.id.match(/^RT(\d+)$/);
+        return match ? Math.max(max, parseInt(match[1], 10)) : max;
+    }, 308); // Start from 308 if no invoices
+    return `RT${maxId + 1}`;
+};
 
 
 
@@ -148,7 +160,7 @@ const Invoice = ({theme}) => {
     e.preventDefault();
 
     const newInvoice = {
-        id: `INV${Date.now()}`,
+        id: generateInvoiceId(),
         name: clientName,
         email: clientEmail,
         description: description,
@@ -201,7 +213,7 @@ const handleSaveDraft = (e) => {
     e.preventDefault();
 
     const newInvoice = {
-        id: `INV${Date.now()}`,
+        id: generateInvoiceId(),
         name: clientName,
         email: clientEmail,
         description: description,
